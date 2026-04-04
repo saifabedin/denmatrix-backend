@@ -1,0 +1,34 @@
+[Unit]
+Description=n8n — ECM AI Workflow Automation
+Documentation=https://docs.n8n.io
+After=network.target
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu
+
+# n8n binary — adjust path if using a different Node version manager
+ExecStart=/usr/bin/env n8n start
+
+# If using nvm, replace ExecStart with the full path, e.g.:
+# ExecStart=/home/ubuntu/.nvm/versions/node/v20.x.x/bin/n8n start
+
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=n8n
+
+# Environment
+Environment=NODE_ENV=production
+Environment=N8N_PORT=5678
+Environment=N8N_PROTOCOL=http
+Environment=N8N_HOST=0.0.0.0
+Environment=N8N_LOG_LEVEL=info
+Environment=N8N_LOG_OUTPUT=console
+Environment=WEBHOOK_URL=http://16.16.98.141:5678/
+Environment=N8N_SECURE_COOKIE=false
+
+[Install]
+WantedBy=multi-user.target
