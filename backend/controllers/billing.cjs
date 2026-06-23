@@ -11,7 +11,7 @@ const razorpay = new Razorpay({
 
 async function getPlans(req, res) {
   try {
-    const result = await pool.query('SELECT plan_id, name, price_monthly, features FROM plans ORDER BY price_monthly ASC');
+    const result = await pool.query('SELECT plan_id, name, price_monthly, features FROM plans WHERE plan_id IS NOT NULL ORDER BY price_monthly ASC');
     return res.json({ success: true, data: result.rows });
   } catch (err) {
     logger.error(`[Billing] getPlans: ${err.message}`);
@@ -123,7 +123,7 @@ async function getBillingStatus(req, res) {
       `SELECT t.plan_id, t.subscription_status, t.razorpay_subscription_id,
               t.trial_ends_at, p.name as plan_name, p.price_monthly, p.features
        FROM tenants t
-       LEFT JOIN plans p ON t.plan_id = p.plan_id
+       LEFT JOIN plans p ON t.plan_id::text = p.plan_id
        WHERE t.id = $1`,
       [tenantId]
     );

@@ -98,7 +98,7 @@ async function getPlatformStats(req, res) {
       pool.query(`SELECT COUNT(*) FROM tenants WHERE subscription_status = 'active'`),
       pool.query(`SELECT COUNT(*) FROM tenants WHERE subscription_status = 'trial'`),
       pool.query(`SELECT niche, COUNT(*) FROM tenants WHERE niche != 'general' GROUP BY niche`),
-      pool.query(`SELECT COALESCE(SUM(p.price_monthly), 0) as mrr FROM tenants t JOIN plans p ON t.plan_id = p.plan_id WHERE t.subscription_status = 'active'`),
+      pool.query(`SELECT COALESCE(SUM(p.price_monthly), 0) as mrr FROM tenants t JOIN plans p ON t.plan_id::text = p.plan_id WHERE t.subscription_status = 'active'`),
     ]);
 
     return res.json({
