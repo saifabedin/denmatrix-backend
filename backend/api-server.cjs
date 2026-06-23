@@ -91,6 +91,7 @@ app.use('/auth', authLimiter);
 // Serve frontend static files from built dist
 app.use(express.static(join(__dirname, '../frontend/dist')));
 app.use('/videos', express.static(join(__dirname, '../public/videos')));
+app.use('/images', express.static(join(__dirname, '../public/images')));
 
 app.get('/', (req, res) => {
   res.sendFile(join(__dirname, '../frontend/dist/index.html'));
