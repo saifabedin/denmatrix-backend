@@ -74,10 +74,11 @@ async function createSubscription(req, res) {
 async function handleWebhook(req, res) {
   try {
     const signature = req.headers['x-razorpay-signature'];
-    const body = JSON.stringify(req.body);
+    // req.body is a Buffer from express.raw() — use it directly for HMAC
+    const rawBody = Buffer.isBuffer(req.body) ? req.body : Buffer.from(JSON.stringify(req.body));
     const expected = crypto
       .createHmac('sha256', process.env.RAZORPAY_WEBHOOK_SECRET)
-      .update(body)
+      .update(rawBody)
       .digest('hex');
 
     if (signature !== expected) {
@@ -85,7 +86,7 @@ async function handleWebhook(req, res) {
       return res.status(400).json({ success: false, error: 'Invalid signature' });
     }
 
-    const event = req.body;
+    const event = JSON.parse(rawBody.toString());
     const subId = event?.payload?.subscription?.entity?.id;
     const tenantRes = subId
       ? await pool.query('SELECT id FROM tenants WHERE razorpay_subscription_id = $1', [subId])
